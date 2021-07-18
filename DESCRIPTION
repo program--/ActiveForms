@@ -1,0 +1,37 @@
+Package: ActiveForms
+Title: ActiveForms: DoD PDF Parser built for Administrators
+Version: 0.0.0.9000
+Authors@R: person('Justin', 'Singh-Mohudpur', email = 'justin@justinsingh.me', role = c('cre', 'aut'))
+Description: A Shiny + Electron application that uses OCR and text mining to extract vital information from DoD PDF forms.
+License: MIT + file LICENSE
+Imports: 
+    attempt,
+    config (>= 0.3.1),
+    dplyr,
+    electricShine,
+    future,
+    fs,
+    glue,
+    golem (>= 0.3.1),
+    htmltools,
+    pdftools,
+    processx,
+    promises,
+    readr,
+    rlang,
+    shiny (>= 1.6.0),
+    shinyjs,
+    shinyWidgets,
+    stringr,
+    tablerDash,
+    waiter
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
+URL: https://github.com/program--/ActiveForms
+BugReports: https://github.com/program--/ActiveForms/issues
+Suggests: 
+    spelling,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Language: en-US
