@@ -1,0 +1,48 @@
+on:
+  push:
+    tags:
+      - '*'
+
+name: Build Electron Application
+
+jobs:
+  build:
+    runs-on: macOS-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v1
+      
+      - name: Install dependencies
+        run: |
+          install.packages("pak", repos = "https://r-lib.github.io/p/pak/dev/")
+          pak::pkg_install(".")
+          ActiveForms::build_app("AF_build")
+        shell: Rscript {0}
+      
+      - name: Package build
+        id: build
+        run: |
+          zip -r -X "ActiveForms_$(Rscript -e 'packageVersion(\"ActiveForms\")').zip" AF_build
+          echo "::set-output name=version::$(Rscript -e 'packageVersion(\"ActiveForms\")')"
+
+      - name: Create release
+        uses: actions/create-release@v1
+        id: create_release
+        with:
+          draft: false
+          prerelease: false
+          release_name: ActiveForms_${{ steps.build.outputs.version }}
+          tag_name: ${{ github.ref }}
+      
+      - name: Upload release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./ActiveForms_${{ steps.build.outputs.version }}.zip
+          asset_name: ActiveForms_${{ steps.build.outputs.version }}.zip
+          asset_content_type: application/zip
