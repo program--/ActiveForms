@@ -3,10 +3,6 @@
 #' @export
 build_app <- function(build_path) {
 
-    if (Sys.info()$sysname == "Linux") {
-        rlang::abort("Building not available for Linux. Use macOS or Windows.")
-    }
-
     if (!dir.exists(build_path)) {
         dir.create(build_path)
     }

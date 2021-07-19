@@ -21,12 +21,14 @@ jobs:
         run: |
           install.packages("pak", repos = "https://r-lib.github.io/p/pak/dev/")
           pak::pkg_install(".")
+          pak::pkg_install("chasemc/electricShine")
           ActiveForms::build_app("AF_build")
         shell: Rscript {0}
       
       - name: Package build
         id: build
         run: |
+          brew install zip
           zip -r -X "ActiveForms_$(Rscript -e 'packageVersion(\"ActiveForms\")').zip" AF_build
           echo "::set-output name=version::$(Rscript -e 'packageVersion(\"ActiveForms\")')"
 
@@ -36,7 +38,7 @@ jobs:
         with:
           draft: false
           prerelease: false
-          release_name: ActiveForms_${{ steps.build.outputs.version }}
+          release_name: ActiveForms ${{ steps.build.outputs.version }}
           tag_name: ${{ github.ref }}
       
       - name: Upload release
