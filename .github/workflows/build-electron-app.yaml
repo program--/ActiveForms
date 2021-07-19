@@ -28,7 +28,6 @@ jobs:
       - name: Package build
         id: build
         run: |
-          brew install zip
           zip -r -X "ActiveForms_$(Rscript -e 'packageVersion(\"ActiveForms\")').zip" AF_build
           echo "::set-output name=version::$(Rscript -e 'packageVersion(\"ActiveForms\")')"
 
