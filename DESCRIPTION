@@ -1,6 +1,6 @@
 Package: ActiveForms
 Title: ActiveForms: DoD PDF Parser built for Administrators
-Version: 0.0.0.9000
+Version: 0.0.1.9000
 Authors@R: person('Justin', 'Singh-Mohudpur', email = 'justin@justinsingh.me', role = c('cre', 'aut'))
 Description: A Shiny + Electron application that uses OCR and text mining to extract vital information from DoD PDF forms.
 License: MIT + file LICENSE
