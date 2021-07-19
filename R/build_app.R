@@ -14,7 +14,8 @@ build_app <- function(build_path) {
         build_path        = build_path,
         function_name     = "run_app",
         cran_like_url     = "https://cran.r-project.org",
-        local_package_path = system.file(package = "ActiveForms"),
+        git_host          = "github",
+        git_repo          = "program--/ActiveForms",
         package_install_opts = list(
             type = "binary",
             dependencies = c("Depends", "Imports")
