@@ -7,8 +7,8 @@ build_app <- function(build_path) {
         dir.create(build_path)
     }
     
-    platform <- "win"
-    arch     <- "x64"
+    platform <<- "win"
+    arch     <<- "x64"
 
     electricShine::electrify(
         app_name          = "ActiveForms",
