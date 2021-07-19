@@ -19,6 +19,7 @@ build_app <- function(build_path) {
         package_install_opts = list(
             type = "binary",
             dependencies = c("Depends", "Imports")
-        )
+        ),
+        permission = TRUE
     )
 }
