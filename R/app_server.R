@@ -5,9 +5,9 @@
 #' @import shiny
 #' @noRd
 app_server <- function(input, output, session) {
-    w <- Waiter$new(id = "csv_data")
+    w <- waiter::Waiter$new(id = "csv_data")
 
-    output$file_data <- renderText({
+    output$file_data <- shiny::renderText({
         if (is.null(input$file_upload)) {
             "0 DD2875s"
         } else {
@@ -15,8 +15,8 @@ app_server <- function(input, output, session) {
         }
     })
 
-    observeEvent(input$submit, {
-        validate(
+    shiny::observeEvent(input$submit, {
+        shiny::validate(
             need(input$file_upload, "At least one file needs to be uploaded.")
         )
 
@@ -32,7 +32,7 @@ app_server <- function(input, output, session) {
         if (nrow(zipped_files) > 0) {
             unzipped_files <- unlist(lapply(
                 zipped_files$datapath,
-                unzip,
+                utils::unzip,
                 exdir = dirname(zipped_files$datapath[1])
             ))
         } else {
@@ -40,7 +40,7 @@ app_server <- function(input, output, session) {
         }
 
         csv_data <-
-            future_promise({
+            promises::future_promise({
                 dplyr::filter(
                     file_upload,
                     stringr::str_detect(name, "2875")
@@ -56,14 +56,14 @@ app_server <- function(input, output, session) {
         csv_cards <- csv_data %...>%
                      create_user_cards()
 
-        output$csv_data <- renderUI({
+        output$csv_data <- shiny::renderUI({
             csv_cards
         })
 
-        then(
+        promises::then(
             csv_data,
             onFulfilled = function(promise_data) {
-                output$.download <<- downloadHandler(
+                output$.download <<- shiny::downloadHandler(
                     filename = function() {
                         paste0("DD2875_", Sys.Date(), ".csv")
                     },
@@ -76,11 +76,11 @@ app_server <- function(input, output, session) {
         )
 
         output$csv_download <- renderUI({
-            downloadButton(
+            shiny::downloadButton(
                 ".download",
                 label = " Download .csv",
                 icon  = htmltools::tagAppendAttributes(
-                    tablerIcon("download"),
+                    tablerDash::tablerIcon("download"),
                     style = "margin-right: 0.5rem;"
                 )
             )

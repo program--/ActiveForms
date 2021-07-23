@@ -11,27 +11,27 @@
 #' @importFrom shiny tags tagAppendAttributes tagList
 list_to_li <- function(list, class = NULL) {
     if (is.null(class)) {
-        tagList(
+        shiny::tagList(
             lapply(
                 list,
-                tags$li
+                shiny::tags$li
             )
         )
     } else {
         res <- lapply(
             list,
-            tags$li
+            shiny::tags$li
         )
         res <- lapply(
             res,
             function(x) {
-                tagAppendAttributes(
+                shiny::tagAppendAttributes(
                     x,
                     class = class
                 )
             }
         )
-        tagList(res)
+        shiny::tagList(res)
     }
 }
 #' Turn an R list into corresponding HTML paragraph tags
@@ -48,27 +48,27 @@ list_to_li <- function(list, class = NULL) {
 #'
 list_to_p <- function(list, class = NULL) {
     if (is.null(class)) {
-        tagList(
+        shiny::tagList(
             lapply(
                 list,
-                tags$p
+                shiny::tags$p
             )
         )
     } else {
         res <- lapply(
             list,
-            tags$p
+            shiny::tags$p
         )
         res <- lapply(
             res,
             function(x) {
-                tagAppendAttributes(
+                shiny::tagAppendAttributes(
                     x,
                     class = class
                 )
             }
         )
-        tagList(res)
+        shiny::tagList(res)
     }
 }
 
@@ -77,8 +77,8 @@ named_to_li <- function(list, class = NULL) {
     if (is.null(class)) {
         res <- mapply(
             function(x, y) {
-                tags$li(
-                    HTML(
+                shiny::tags$li(
+                    shiny::HTML(
                         sprintf("<b>%s:</b> %s", y, x)
                     )
                 )
@@ -87,12 +87,12 @@ named_to_li <- function(list, class = NULL) {
             names(list),
             SIMPLIFY = FALSE
         )
-        tagList(res)
+        shiny::tagList(res)
     } else {
         res <- mapply(
             function(x, y) {
-                tags$li(
-                    HTML(
+                shiny::tags$li(
+                    shiny::HTML(
                         sprintf("<b>%s:</b> %s", y, x)
                     )
                 )
@@ -104,13 +104,13 @@ named_to_li <- function(list, class = NULL) {
         res <- lapply(
             res,
             function(x) {
-                tagAppendAttributes(
+                shiny::tagAppendAttributes(
                     x,
                     class = class
                 )
             }
         )
-        tagList(res)
+        shiny::tagList(res)
     }
 }
 
@@ -186,7 +186,7 @@ display <- function(tag) {
 #'
 #' @importFrom shiny tags
 jq_hide <- function(id) {
-    tags$script(sprintf("$('#%s').hide()", id))
+    shiny::tags$script(sprintf("$('#%s').hide()", id))
 }
 
 #' Add a red star at the end of the text
@@ -204,7 +204,7 @@ jq_hide <- function(id) {
 #' @importFrom shiny tags HTML
 with_red_star <- function(text) {
     shiny::tags$span(
-        HTML(
+        shiny::HTML(
             paste0(
                 text,
                 shiny::tags$span(
@@ -228,7 +228,7 @@ with_red_star <- function(text) {
 #' rep_br(5)
 #' @importFrom shiny HTML
 rep_br <- function(times = 1) {
-    HTML(rep("<br/>", times = times))
+    shiny::HTML(rep("<br/>", times = times))
 }
 
 #' Create an url
@@ -243,7 +243,7 @@ rep_br <- function(times = 1) {
 #' enurl("https://www.thinkr.fr", "ThinkR")
 #' @importFrom shiny tags
 enurl <- function(url, text) {
-    tags$a(href = url, text)
+    shiny::tags$a(href = url, text)
 }
 
 #' Columns wrappers
@@ -255,46 +255,46 @@ enurl <- function(url, text) {
 #'
 #' @importFrom shiny column
 col_12 <- function(...) {
-    column(12, ...)
+    shiny::column(12, ...)
 }
 
 #' @importFrom shiny column
 col_10 <- function(...) {
-    column(10, ...)
+    shiny::column(10, ...)
 }
 
 #' @importFrom shiny column
 col_8 <- function(...) {
-    column(8, ...)
+    shiny::column(8, ...)
 }
 
 #' @importFrom shiny column
 col_6 <- function(...) {
-    column(6, ...)
+    shiny::column(6, ...)
 }
 
 
 #' @importFrom shiny column
 col_4 <- function(...) {
-    column(4, ...)
+    shiny::column(4, ...)
 }
 
 
 #' @importFrom shiny column
 col_3 <- function(...) {
-    column(3, ...)
+    shiny::column(3, ...)
 }
 
 
 #' @importFrom shiny column
 col_2 <- function(...) {
-    column(2, ...)
+    shiny::column(2, ...)
 }
 
 
 #' @importFrom shiny column
 col_1 <- function(...) {
-    column(1, ...)
+    shiny::column(1, ...)
 }
 
 
@@ -379,13 +379,13 @@ create_user_card <- function(tbl_row) {
         paste(args, collapse = ", ")
     }
 
-    dod_id <- .set_null(tbl_row$DoDID)
-    last_name <- .set_null(tbl_row$LastName)
-    first_name <- .set_null(tbl_row$FirstName)
+    dod_id         <- .set_null(tbl_row$DoDID)
+    last_name      <- .set_null(tbl_row$LastName)
+    first_name     <- .set_null(tbl_row$FirstName)
     middle_initial <- .set_null(tbl_row$MiddleInitial)
-    rank <- .set_null(tbl_row$Rank)
-    office <- .set_null(tbl_row$Office)
-    org <- .set_null(tbl_row$Organization)
+    rank           <- .set_null(tbl_row$Rank)
+    office         <- .set_null(tbl_row$Office)
+    org            <- .set_null(tbl_row$Organization)
 
     is_null_misc <- list(
         last_name, first_name,
@@ -395,7 +395,7 @@ create_user_card <- function(tbl_row) {
 
     if (is.null(dod_id)) {
         card_status <- "danger"
-        dod_id <- "DoDID Missing"
+        dod_id      <- "<MISSING DODID>"
     } else if (any(is_null_misc)) {
         card_status <- "warning"
 
@@ -420,23 +420,23 @@ create_user_card <- function(tbl_row) {
         card_status <- "success"
     }
 
-    tablerCard(
-        tags$h4(tablerIcon("user")),
-        tags$h5(.join(c(last_name, first_name, middle_initial))),
-        tags$h6(.join(c(rank, office, org))),
-        footer = tags$div(
+    tablerDash::tablerCard(
+        shiny::tags$h4(tablerDash::tablerIcon("user")),
+        shiny::tags$h5(.join(c(last_name, first_name, middle_initial))),
+        shiny::tags$h6(.join(c(rank, office, org))),
+        footer = shiny::tags$div(
             paste0("DoDID: ", dod_id),
             class = "text-center"
         ),
-        status = card_status,
+        status     = card_status,
         statusSide = "top",
-        width = 4,
-        class = "text-center"
+        width      = 4,
+        class      = "text-center"
     )
 }
 
 create_user_cards <- function(dd_table) {
-    rows <- nrow(dd_table)
+    rows  <- nrow(dd_table)
     iters <- seq_len(rows)
 
     lapply(

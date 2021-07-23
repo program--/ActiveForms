@@ -1,4 +1,4 @@
 library(testthat)
 library(ActiveForms)
 
-test_check("ActiveForms")
+testthat::test_check("ActiveForms")

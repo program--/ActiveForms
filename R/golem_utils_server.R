@@ -6,10 +6,8 @@
 #' 1 %not_in% 1:10
 #' not_null(NULL)
 `%not_in%` <- Negate(`%in%`)
-
-not_null <- Negate(is.null)
-
-not_na <- Negate(is.na)
+not_null   <- Negate(is.null)
+not_na     <- Negate(is.na)
 
 #' Removes the null from a vector
 #'
@@ -59,31 +57,31 @@ drop_nulls <- function(x) {
 #' @inheritParams reactiveValuesToList
 #'
 #' @noRd
-rv <- shiny::reactiveValues
+rv   <- shiny::reactiveValues
 rvtl <- shiny::reactiveValuesToList
 
 extract_2875 <- function(pdf_path) {
     txt <- .read_pdf(pdf_path)
 
-    name <- .ext_name(txt)
+    name         <- .ext_name(txt)
     organization <- .ext_org(txt)
-    office <- .ext_office(txt)
-    title_rank <- .ext_title_rank(txt)
-    dodid <- .ext_dodid(txt)
+    office       <- .ext_office(txt)
+    title_rank   <- .ext_title_rank(txt)
+    dodid        <- .ext_dodid(txt)
 
     dplyr::tibble(
-        DoDID = dodid,
-        LastName = name[1],
-        FirstName = name[2],
+        DoDID         = dodid,
+        LastName      = name[1],
+        FirstName     = name[2],
         MiddleInitial = ifelse(
             name[3] == "NA",
             "NA",
             paste0(substr(name[3], 1, 1), ".")
         ),
         Organization = !!organization,
-        Office = !!office,
-        Rank = title_rank,
-        PDF_PATH = pdf_path
+        Office       = !!office,
+        Rank         = title_rank,
+        PDF_PATH     = pdf_path
     ) %>%
         dplyr::mutate(
             dplyr::across(
@@ -136,25 +134,25 @@ extract_2875 <- function(pdf_path) {
     end <- .index_phrase(txt, "3. OFFICE SYMBOL") - 1
 
     base <- txt[end] %>%
-        stringr::str_trim() %>%
-        stringr::str_sub(
-            start = ifelse(
-                is.na(stringr::str_locate(., "\\d")[1]),
-                stringr::str_locate(., "  ")[1],
-                stringr::str_locate(., "\\d")[1]
-            )
-        ) %>%
-        stringr::str_trim() %>%
-        stringr::str_split("[/|,]") %>%
-        unlist() %>%
-        `[`(1) %>%
-        stringr::str_to_upper() %>%
-        stringr::str_split_fixed(" ", n = 2) %>%
-        as.vector()
+            stringr::str_trim() %>%
+            stringr::str_sub(
+                start = ifelse(
+                    is.na(stringr::str_locate(., "\\d")[1]),
+                    stringr::str_locate(., "  ")[1],
+                    stringr::str_locate(., "\\d")[1]
+                )
+            ) %>%
+            stringr::str_trim() %>%
+            stringr::str_split("[/|,]") %>%
+            unlist() %>%
+            `[`(1) %>%
+            stringr::str_to_upper() %>%
+            stringr::str_split_fixed(" ", n = 2) %>%
+            as.vector()
 
     base[1] <- base[1] %>%
-        stringr::str_extract("\\d+|HAF") %>%
-        stringr::str_trim()
+               stringr::str_extract("\\d+|HAF") %>%
+               stringr::str_trim()
 
     if (is.na(base[2])) {
         min_length <- 1
@@ -173,8 +171,8 @@ extract_2875 <- function(pdf_path) {
     }
 
     base[2] <- base[2] %>%
-        .abbreviate(minlength = min_length) %>%
-        stringr::str_trim()
+               .abbreviate(minlength = min_length) %>%
+               stringr::str_trim()
 
     paste(base, collapse = " ") %>%
         stringr::str_trim()
@@ -201,6 +199,7 @@ extract_2875 <- function(pdf_path) {
         `[`(1)
 }
 
+#' @importFrom stats na.omit
 .ext_title_rank <- function(txt) {
     index <- .index_phrase(txt, "6. JOB TITLE AND GRADE/RANK") + 1
 
@@ -238,20 +237,20 @@ extract_2875 <- function(pdf_path) {
     )
 
     rank <- txt[index] %>%
-        stringr::str_sub(start = 50) %>%
-        stringr::str_trim() %>%
-        stringr::str_split("[/|,]") %>%
-        unlist() %>%
-        stringr::str_trim() %>%
-        stringr::str_to_upper()
+            stringr::str_sub(start = 50) %>%
+            stringr::str_trim() %>%
+            stringr::str_split("[/|,]") %>%
+            unlist() %>%
+            stringr::str_trim() %>%
+            stringr::str_to_upper()
 
     if (any(stringr::str_detect(rank, "[E|O|0]-[\\d]"))) {
         rank <- stringr::str_extract(rank, "[E|O|0]-[\\d]") %>%
-            na.omit() %>%
-            stringr::str_replace(
-                "[E|O|0]-[\\d]",
-                names(pay_grades)[which(pay_grades == .)]
-            )
+                stats::na.omit() %>%
+                stringr::str_replace(
+                    "[E|O|0]-[\\d]",
+                    names(pay_grades)[which(pay_grades == .)]
+                )
 
         if (length(rank) == 1 & !identical(rank, character(0))) {
             return(rank)
@@ -259,13 +258,13 @@ extract_2875 <- function(pdf_path) {
     }
 
     rank <- rank %>%
-        stringr::str_remove_all("[E|O|0]-[\\d]") %>%
-        stringr::str_remove_all("[E|O|0][\\d]") %>%
-        `[`(. != "") %>%
-        stringr::str_trim() %>%
-        stringr::str_extract_all(ranks) %>%
-        unlist() %>%
-        `[`(!is.na(.))
+            stringr::str_remove_all("[E|O|0]-[\\d]") %>%
+            stringr::str_remove_all("[E|O|0][\\d]") %>%
+            `[`(. != "") %>%
+            stringr::str_trim() %>%
+            stringr::str_extract_all(ranks) %>%
+            unlist() %>%
+            `[`(!is.na(.))
 
     .abbreviate_rank <- function(string, abbreviations) {
         if (identical(string, character(0)) | is.null(string)) {
@@ -291,19 +290,12 @@ extract_2875 <- function(pdf_path) {
 }
 
 .ext_dodid <- function(txt) {
-    dodid <- txt %>%
+    txt %>%
         stringr::str_extract_all("[0-9]{10}") %>%
         unlist() %>%
         `[`(1)
-
-    if (length(dodid) != 1) {
-        warning("Something is wrong with the DoD ID parsing... Check the 2875 manually.")
-    }
-
-    dodid
 }
 
 .index_phrase <- function(txt, phrase) {
-    stringr::str_detect(txt, phrase) %>%
-        which()
+    which(stringr::str_detect(txt, phrase))
 }

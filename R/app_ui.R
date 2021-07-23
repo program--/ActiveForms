@@ -2,32 +2,32 @@
 #'
 #' @param request Internal parameter for `{shiny}`.
 #'     DO NOT REMOVE.
-#' @import shiny tablerDash waiter promises
+#' @import shiny tablerDash waiter promises shinyjs
 #' @importFrom dplyr `%>%`
 #' @noRd
 app_ui <- function(request) {
-    main_input <- tablerCard(
+    main_input <- tablerDash::tablerCard(
         closable = FALSE,
         zoomable = FALSE,
-        fileInput(
-            inputId = "file_upload",
-            label = "Upload DD2875s",
-            multiple = TRUE,
-            accept   = c(".pdf", "application/pdf", ".zip"),
-            buttonLabel = tablerIcon("upload")
+        shiny::fileInput(
+            inputId     = "file_upload",
+            label       = "Upload DD2875s",
+            multiple    = TRUE,
+            accept      = c(".pdf", "application/pdf", ".zip"),
+            buttonLabel = tablerDash::tablerIcon("upload")
         ),
         shinyjs::disabled(
-            textInput("domaintext", "Active Directory Server")
+            shiny::textInput("domaintext", "Active Directory Server")
         ),
         checkboxInput("domainbox", "Create AD Users"),
         shinyjs::disabled(
-            textInput("exchangetext", "Exchange Server")
+            shiny::textInput("exchangetext", "Exchange Server")
         ),
-        checkboxInput("exchangebox", "Create Exchange Mailboxes"),
-        actionButton(
+        shiny::checkboxInput("exchangebox", "Create Exchange Mailboxes"),
+        shiny::actionButton(
             inputId = "submit",
-            label = tags$span(
-                tablerIcon("check-circle"),
+            label   = shiny::tags$span(
+                tablerDash::tablerIcon("check-circle"),
                 "Submit"
             ),
             style = "margin: auto; display: block;",
@@ -36,52 +36,50 @@ app_ui <- function(request) {
         width = 12,
         status = "info"
     ) %>%
-        tagAppendAttributes(class = "h-100")
+        shiny::tagAppendAttributes(class = "h-100")
 
     main_input$children[[1]] <-
         main_input$children[[1]] %>%
-        tagAppendAttributes(class = "h-100")
+        shiny::tagAppendAttributes(class = "h-100")
 
-    main_output <- tablerCard(
-        # shiny::tableOutput("file_data"),
-        # shiny::uiOutput("users"),
+    main_output <- tablerDash::tablerCard(
         shiny::uiOutput("csv_data", class = "row"),
         shiny::uiOutput("csv_download", class = "text-center"),
         width = 12
     ) %>%
-        tagAppendAttributes(class = "h-100")
+        shiny::tagAppendAttributes(class = "h-100")
 
     main_output$children[[1]] <-
         main_output$children[[1]] %>%
-        tagAppendAttributes(class = "h-100")
+        shiny::tagAppendAttributes(class = "h-100")
 
     main_output$children[[1]]$children <-
         main_output$children[[1]]$children %>%
-        tagAppendChild(
-            tags$div(
-                textOutput("file_data"),
+        shiny::tagAppendChild(
+            shiny::tags$div(
+                shiny::textOutput("file_data"),
                 class = "ribbon ribbon-bookmark"
             )
         )
 
-    tagList(
+    shiny::tagList(
         golem_add_external_resources(),
-        tablerDashPage(
+        tablerDash::tablerDashPage(
             title = "ActiveForms",
-            body = tablerDashBody(
-                tablerTabItems(
-                    tablerTabItem(
+            body = tablerDash::tablerDashBody(
+                tablerDash::tablerTabItems(
+                    tablerDash::tablerTabItem(
                         tabName = "Main",
-                        tags$h1(
-                            tablerIcon("layers"), "ActiveForms",
+                        shiny::tags$h1(
+                            tablerDash::tablerIcon("layers"), "ActiveForms",
                             style = "text-align: center; font-weight: 300;"
                         ),
-                        fluidRow(
-                            column(
+                        shiny::fluidRow(
+                            shiny::column(
                                 width = 4,
                                 main_input
                             ),
-                            column(
+                            shiny::column(
                                 width = 8,
                                 main_output
                             )
@@ -89,7 +87,7 @@ app_ui <- function(request) {
                     )
                 )
             ),
-            footer = tags$div(style = "display: none;")
+            footer = shiny::tags$div(style = "display: none;")
         )
     )
 }
@@ -103,18 +101,22 @@ app_ui <- function(request) {
 #' @importFrom golem add_resource_path activate_js favicon bundle_resources
 #' @noRd
 golem_add_external_resources <- function() {
-    add_resource_path(
+    golem::add_resource_path(
         "www", app_sys("app/www")
     )
 
-    tags$head(
-        favicon(),
-        bundle_resources(
-            path = app_sys("app/www"),
+    shiny::tags$head(
+        golem::favicon(),
+        golem::bundle_resources(
+            path      = app_sys("app/www"),
             app_title = "ActiveForms"
         ),
         waiter::useWaiter(),
         shinyjs::useShinyjs(),
-        waiterPreloader(html = spin_2(), fadeout = TRUE, color = "#f4f6fa")
+        waiter::waiterPreloader(
+            html    = waiter::spin_2(),
+            fadeout = TRUE,
+            color   = "#f4f6fa"
+        )
     )
 }
