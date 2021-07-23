@@ -25,19 +25,15 @@ jobs:
           ActiveForms::build_app("AF_build")
         shell: Rscript {0}
       
-      - name: Get Package Version
-        id: pkg_ver
-        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
-      
       - name: Package build
         env:
           PACKAGE_VER: ${{ steps.pkg_ver.outputs.tag }}
         run: |
-          zip -r -X ActiveForms_$PACKAGE_VER.zip AF_build
+          zip -r -X ActiveForms-win.zip AF_build
       
       - name: Upload release
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: ActiveForms_${{ steps.pkg_ver.outputs.tag }}.zip
+          files: ActiveForms-win.zip
