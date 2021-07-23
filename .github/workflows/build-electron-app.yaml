@@ -32,7 +32,8 @@ jobs:
         env:
           PACKAGE_VER: ${{ steps.pkg_ver.outputs.tag }}
         run: |
-          zip -r -X ActiveForms-win.zip AF_build
+          AF_PATH=$(ls AF_build/ActiveForms/dist/ | grep "\.exe$")
+          zip -r -X ActiveForms-win.zip $AF_PATH
       
       - name: Upload release
         uses: softprops/action-gh-release@v1
