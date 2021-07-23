@@ -21,7 +21,7 @@ jobs:
         run: |
           install.packages("pak", repos = "https://r-lib.github.io/p/pak/dev/")
           pak::pkg_install(".")
-          pak::pkg_install("chasemc/electricShine")
+          pak::pkg_install("roblen001/electricShine")
           ActiveForms::build_app("AF_build")
         shell: Rscript {0}
       
