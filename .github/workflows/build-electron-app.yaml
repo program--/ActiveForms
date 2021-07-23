@@ -1,7 +1,7 @@
 on:
   push:
     tags:
-      - '*'
+      - 'v*.*.*'
 
 name: Build Electron Application
 
@@ -25,25 +25,19 @@ jobs:
           ActiveForms::build_app("AF_build")
         shell: Rscript {0}
       
+      - name: Get Package Version
+        id: pkg_ver
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+      
       - name: Package build
-        id: build
+        env:
+          PACKAGE_VER: ${{ steps.pkg_ver.outputs.tag }}
         run: |
-          zip -r -X "ActiveForms_$(Rscript -e 'packageVersion(\"ActiveForms\")').zip" AF_build
-          echo "::set-output name=version::$(Rscript -e 'packageVersion(\"ActiveForms\")')"
-
-      - name: Create release
-        uses: actions/create-release@v1
-        id: create_release
-        with:
-          draft: false
-          prerelease: false
-          release_name: ActiveForms ${{ steps.build.outputs.version }}
-          tag_name: ${{ github.ref }}
+          zip -r -X ActiveForms_$PACKAGE_VER.zip AF_build
       
       - name: Upload release
-        uses: actions/upload-release-asset@v1
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./ActiveForms_${{ steps.build.outputs.version }}.zip
-          asset_name: ActiveForms_${{ steps.build.outputs.version }}.zip
-          asset_content_type: application/zip
+          files: ActiveForms_${{ steps.pkg_ver.outputs.tag }}.zip
