@@ -7,7 +7,6 @@
 #'
 #' @export
 #' @importFrom shiny shinyApp
-#' @importFrom golem with_golem_options
 run_app <- function(onStart = NULL,
                     options = list(),
                     enableBookmarking = NULL,
@@ -15,20 +14,18 @@ run_app <- function(onStart = NULL,
                     futurePlan = future::multisession,
                     ...) {
     future::plan(futurePlan)
+
     waiter::waiter_set_theme(
         html  = waiter::spin_2(),
         color = waiter::transparent(0.5)
     )
 
-    golem::with_golem_options(
-        app = shiny::shinyApp(
-            ui                = app_ui,
-            server            = app_server,
-            onStart           = onStart,
-            options           = options,
-            enableBookmarking = enableBookmarking,
-            uiPattern         = uiPattern
-        ),
-        golem_opts = list(...)
+    shiny::shinyApp(
+        ui                = app_ui,
+        server            = app_server,
+        onStart           = onStart,
+        options           = options,
+        enableBookmarking = enableBookmarking,
+        uiPattern         = uiPattern
     )
 }
