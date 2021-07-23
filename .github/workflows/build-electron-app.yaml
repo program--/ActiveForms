@@ -32,7 +32,7 @@ jobs:
         env:
           PACKAGE_VER: ${{ steps.pkg_ver.outputs.tag }}
         run: |
-          $AF_PATH=$(ls AF_build/ActiveForms/dist/ | Select-String -Pattern "exe$")
+          $AF_PATH=$(Get-ChildItem -Path AF_build/ActiveForms/dist/ | Where-Object {$_.Name -like "*.exe"} | Select-Object -Expand Name)
           Write-Output $AF_PATH
           zip -r -X ActiveForms-win.zip AF_build/ActiveForms/dist/$AF_PATH
       
