@@ -32,7 +32,7 @@ jobs:
         env:
           PACKAGE_VER: ${{ steps.pkg_ver.outputs.tag }}
         run: |
-          AF_PATH=$(ls AF_build/ActiveForms/dist/ | grep "\.exe$")
+          $AF_PATH=$(ls AF_build/ActiveForms/dist/ | Select-String -Pattern "\.exe$")
           zip -r -X ActiveForms-win.zip $AF_PATH
       
       - name: Upload release
